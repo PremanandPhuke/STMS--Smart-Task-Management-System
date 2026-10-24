@@ -1,0 +1,32 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: notification-service
+  # Uncomment to send REAL emails (e.g. Gmail app password / Mailtrap).
+  # Without spring.mail.host the service just logs reminders.
+  # mail:
+  #   host: smtp.gmail.com
+  #   port: 587
+  #   username: ${MAIL_USERNAME}
+  #   password: ${MAIL_PASSWORD}
+  #   properties:
+  #     mail.smtp.auth: true
+  #     mail.smtp.starttls.enable: true
+
+grpc:
+  server:
+    port: 9090
+
+notification:
+  # Shared secret that task-service must send in the "x-api-key" gRPC header
+  api-key: ${NOTIFICATION_API_KEY:dev-shared-secret}
+  mail:
+    from: ${MAIL_FROM:noreply@stms.local}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

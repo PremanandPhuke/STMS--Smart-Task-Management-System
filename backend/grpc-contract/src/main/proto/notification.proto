@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package stms.notification;
+
+option java_multiple_files = true;
+option java_package = "com.stms.grpc";
+option java_outer_classname = "NotificationProto";
+
+// Contract between task-service (client) and notification-service (server).
+service NotificationService {
+  rpc SendReminder (ReminderRequest) returns (ReminderResponse);
+}
+
+message ReminderRequest {
+  string recipient_email = 1;
+  string recipient_name  = 2;
+  string task_title      = 3;
+  string project_name    = 4;
+  string due_date        = 5; // ISO-8601, e.g. 2026-11-02
+}
+
+message ReminderResponse {
+  bool   delivered = 1;
+  string message   = 2;
+}

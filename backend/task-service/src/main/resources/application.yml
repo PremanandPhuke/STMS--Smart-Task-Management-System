@@ -1,0 +1,56 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: task-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/stms_db}
+    username: ${DB_USERNAME:stms_user}
+    password: ${DB_PASSWORD:stms_pass}
+  jpa:
+    hibernate:
+      ddl-auto: validate        # Flyway owns the schema; Hibernate only validates it
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  jwt:
+    # CHANGE in production and keep it in an environment variable (min. 32 characters)
+    secret: ${JWT_SECRET:change-me-please-use-a-long-random-secret-key-1234567890}
+    access-expiration-minutes: 30
+    refresh-expiration-days: 7
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+  reminders:
+    enabled: true
+    cron: "0 */15 * * * *"     # every 15 minutes (use "0 * * * * *" to test every minute)
+    lookahead-days: 1          # remind for tasks due today / tomorrow / overdue
+  seed:
+    enabled: true              # creates demo users + sample data on first start
+
+# gRPC client -> notification-service
+grpc:
+  client:
+    notification-service:
+      address: static://localhost:9090
+      negotiation-type: plaintext
+
+notification:
+  api-key: ${NOTIFICATION_API_KEY:dev-shared-secret}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

@@ -1,0 +1,22 @@
+# Starts ONLY PostgreSQL for local development.
+# Run:  docker compose up -d
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: stms-postgres
+    environment:
+      POSTGRES_DB: stms_db
+      POSTGRES_USER: stms_user
+      POSTGRES_PASSWORD: stms_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - stms_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stms_user -d stms_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  stms_pgdata:
