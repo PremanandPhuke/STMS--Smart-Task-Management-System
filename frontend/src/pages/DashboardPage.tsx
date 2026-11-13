@@ -5,6 +5,7 @@ import { DueDate, PriorityBadge, ScoreMeter } from '../components/Badges';
 import TaskDetailModal from '../components/TaskDetailModal';
 import { PRIORITIES, PRIORITY_LABEL } from '../api/types';
 import type { Dashboard } from '../api/types';
+import {Spinner, DashboardSkeleton  } from '../components/Loaders';
 
 export default function DashboardPage() {
   const [data, setData] = useState<Dashboard | null>(null);
@@ -18,7 +19,8 @@ export default function DashboardPage() {
   }, []);
 
   if (error) return <div className="error">{error}</div>;
-  if (!data) return <p className="muted">Loading your dashboard…</p>;
+//   if (!data) return <p className="muted">Loading your dashboard…</p>;
+    if (!data) return  <DashboardSkeleton />;
 
   const maxOpen = Math.max(1, ...Object.values(data.openByPriority));
 

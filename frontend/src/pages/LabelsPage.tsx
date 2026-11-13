@@ -3,14 +3,17 @@ import type { FormEvent } from 'react';
 import { labelsApi } from '../api/services';
 import { errorMessage } from '../api/client';
 import type { Label } from '../api/types';
+import {ListSkeleton} from '../components/Loaders';
 
 export default function LabelsPage() {
   const [labels, setLabels] = useState<Label[]>([]);
   const [name, setName] = useState('');
   const [color, setColor] = useState('#0f766e');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const load = () => labelsApi.list().then(setLabels).catch((e) => setError(errorMessage(e)));
+
+  const load = () => labelsApi.list().then(setLabels).catch((e) => setError(errorMessage(e))).finally(() => setLoading(false));
 
   useEffect(() => {
     load();
@@ -53,16 +56,19 @@ export default function LabelsPage() {
       </form>
 
       {error && <div className="error">{error}</div>}
-      {labels.length === 0 && <div className="empty">No labels yet.</div>}
+      {loading && <ListSkeleton />}
+      {!loading && labels.length === 0 && <div className="empty">No labels yet.</div>}
 
-      <div className="panel">
-        {labels.map((l) => (
-          <div key={l.id} className="task-line" style={{ cursor: 'default' }}>
-            <span className="title"><span className="chip" style={{ background: l.color }}>{l.name}</span></span>
-            <button className="btn small danger" onClick={() => remove(l.id)}>Delete</button>
-          </div>
-        ))}
-      </div>
+      {!loading && labels.length > 0 && (
+              <div className="panel">
+                {labels.map((l) => (
+                  <div key={l.id} className="task-line" style={{ cursor: 'default' }}>
+                    <span className="title"><span className="chip" style={{ background: l.color }}>{l.name}</span></span>
+                    <button className="btn small danger" onClick={() => remove(l.id)}>Delete</button>
+                  </div>
+                ))}
+              </div>
+            )}
     </>
   );
 }

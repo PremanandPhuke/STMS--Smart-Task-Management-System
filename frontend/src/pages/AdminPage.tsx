@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import { usersApi } from '../api/services';
 import { errorMessage } from '../api/client';
 import type { User } from '../api/types';
+import {TableSkeleton} from '../components/Loaders';
 
 /** Only reachable by ADMIN users (see ProtectedRoute adminOnly and the backend /api/admin/** rule). */
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+
+
 
   useEffect(() => {
-    usersApi.adminList().then(setUsers).catch((e) => setError(errorMessage(e)));
+    usersApi.adminList().then(setUsers).catch((e) => setError(errorMessage(e))).finally(() => setLoading(false));
   }, []);
 
   return (
@@ -21,16 +25,21 @@ export default function AdminPage() {
         </div>
       </div>
       {error && <div className="error">{error}</div>}
-      <div className="table-wrap">
-        <table>
-          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr></thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id}><td>{u.id}</td><td>{u.name}</td><td>{u.email}</td><td>{u.role}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {loading && <TableSkeleton rows={4}/> }
+      {!loading  && (
+          <div className="table-wrap">
+                  <table>
+                    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+                    <tbody>
+                      {users.map((u) => (
+                        <tr key={u.id}><td>{u.id}</td><td>{u.name}</td><td>{u.email}</td><td>{u.role}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+          )}
+
+
     </>
   );
 }

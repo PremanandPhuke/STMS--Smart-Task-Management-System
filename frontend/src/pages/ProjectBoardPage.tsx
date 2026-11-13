@@ -7,6 +7,7 @@ import TaskDetailModal from '../components/TaskDetailModal';
 import TaskFormModal from '../components/TaskFormModal';
 import { STATUSES, STATUS_LABEL } from '../api/types';
 import type { Project, Task, TaskStatus } from '../api/types';
+import { BoardSkeleton } from '../components/Loaders';
 
 export default function ProjectBoardPage() {
   const projectId = Number(useParams().id);
@@ -17,6 +18,7 @@ export default function ProjectBoardPage() {
   const [creating, setCreating] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState<TaskStatus | null>(null);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const load = useCallback(async () => {
     try {
@@ -26,7 +28,10 @@ export default function ProjectBoardPage() {
       setError('');
     } catch (err) {
       setError(errorMessage(err));
-    }
+    } finally{
+        setFirstLoad(false);
+        }
+
   }, [projectId, search]);
 
   useEffect(() => {
@@ -42,6 +47,7 @@ export default function ProjectBoardPage() {
     } catch (err) {
       setError(errorMessage(err));
     }
+
   };
 
   return (
@@ -65,48 +71,52 @@ export default function ProjectBoardPage() {
 
       {error && <div className="error">{error}</div>}
 
-      <div className="board">
-        {STATUSES.map((status) => {
-          const column = tasks.filter((t) => t.status === status);
-          return (
-            <div
-              key={status}
-              className={dragOver === status ? 'column drag-over' : 'column'}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragOver(status);
-              }}
-              onDragLeave={() => setDragOver(null)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setDragOver(null);
-                moveTask(Number(e.dataTransfer.getData('text/plain')), status);
-              }}
-            >
-              <h3>{STATUS_LABEL[status]} <span className="muted">{column.length}</span></h3>
-              {column.length === 0 && <p className="muted" style={{ padding: '0 .25rem' }}>Drop a task here.</p>}
-              {column.map((t) => (
-                <div
-                  key={t.id}
-                  className={`task-card b-${t.priority}`}
-                  draggable
-                  onDragStart={(e) => e.dataTransfer.setData('text/plain', String(t.id))}
-                  onClick={() => setOpenTaskId(t.id)}
-                >
-                  <div className="t">{t.title}</div>
-                  <div><LabelChips labels={t.labels} /></div>
-                  <div className="meta">
-                    <PriorityBadge priority={t.priority} />
-                    <DueDate date={t.dueDate} overdue={t.overdue} />
-                    <ScoreMeter score={t.priorityScore} />
-                  </div>
-                  {t.assigneeName && <div className="due" style={{ marginTop: '.35rem' }}>Assigned to {t.assigneeName}</div>}
+      {firstLoad  ? (
+          <BoardSkeleton/>
+          ) : (
+          <div className="board">
+                  {STATUSES.map((status) => {
+                    const column = tasks.filter((t) => t.status === status);
+                    return (
+                      <div
+                        key={status}
+                        className={dragOver === status ? 'column drag-over' : 'column'}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          setDragOver(status);
+                        }}
+                        onDragLeave={() => setDragOver(null)}
+                        onDrop={(e) => {l̥
+                          e.preventDefault();
+                          setDragOver(null);
+                          moveTask(Number(e.dataTransfer.getData('text/plain')), status);
+                        }}
+                      >
+                        <h3>{STATUS_LABEL[status]} <span className="muted">{column.length}</span></h3>
+                        {column.length === 0 && <p className="muted" style={{ padding: '0 .25rem' }}>Drop a task here.</p>}
+                        {column.map((t) => (
+                          <div
+                            key={t.id}
+                            className={`task-card b-${t.priority}`}
+                            draggable
+                            onDragStart={(e) => e.dataTransfer.setData('text/plain', String(t.id))}
+                            onClick={() => setOpenTaskId(t.id)}
+                          >
+                            <div className="t">{t.title}</div>
+                            <div><LabelChips labels={t.labels} /></div>
+                            <div className="meta">
+                              <PriorityBadge priority={t.priority} />
+                              <DueDate date={t.dueDate} overdue={t.overdue} />
+                              <ScoreMeter score={t.priorityScore} />
+                            </div>
+                            {t.assigneeName && <div className="due" style={{ marginTop: '.35rem' }}>Assigned to {t.assigneeName}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          );
-        })}
-      </div>
+          )}
 
       {creating && (
         <TaskFormModal

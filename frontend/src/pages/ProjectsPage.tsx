@@ -5,6 +5,8 @@ import { projectsApi } from '../api/services';
 import { errorMessage } from '../api/client';
 import Modal from '../components/Modal';
 import type { Project } from '../api/types';
+import { CardsSkeleton} from '../components/Loaders';
+
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[] | null>(null);
@@ -59,7 +61,8 @@ export default function ProjectsPage() {
       </div>
 
       {error && !editing && <div className="error">{error}</div>}
-      {projects === null && <p className="muted">Loading…</p>}
+
+      {projects === null && !error && <CardsSkeleton />}
       {projects?.length === 0 && <div className="empty">No projects yet. Create one to start adding tasks.</div>}
 
       <div className="cards">

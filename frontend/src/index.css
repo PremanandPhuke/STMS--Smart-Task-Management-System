@@ -159,3 +159,13 @@ tr.click:hover td { background: #f7fafa; }
 .label-pick input:checked + span { opacity: 1; border-color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+
+/* ---------- loaders ---------- */
+.spinner { display: inline-block; border: 3px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn .spinner { width: 14px; height: 14px; border-width: 2px; margin-right: .45rem; vertical-align: -2px; }
+.btn.primary .spinner { border-color: rgba(255,255,255,.35); border-top-color: #fff; }
+.skeleton { display: block; border-radius: 6px; background: linear-gradient(90deg, #e3e8ec 25%, #f1f4f6 40%, #e3e8ec 60%); background-size: 300% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+.page-loader { display: grid; justify-items: center; gap: .75rem; padding: 3rem 1rem; color: var(--muted); }

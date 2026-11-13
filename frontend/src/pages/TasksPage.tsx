@@ -5,6 +5,8 @@ import { DueDate, LabelChips, PriorityBadge, ScoreMeter, StatusBadge } from '../
 import TaskDetailModal from '../components/TaskDetailModal';
 import { PRIORITIES, PRIORITY_LABEL, STATUSES, STATUS_LABEL } from '../api/types';
 import type { PageResponse, Priority, Task, TaskStatus } from '../api/types';
+import {TableSkeleton} from '../components/Loaders';
+
 
 export default function TasksPage() {
   const [result, setResult] = useState<PageResponse<Task> | null>(null);
@@ -34,6 +36,8 @@ export default function TasksPage() {
     setPage(0);
   };
 
+
+
   return (
     <>
       <div className="page-head">
@@ -61,8 +65,9 @@ export default function TasksPage() {
         </select>
       </div>
 
-      {error && <div className="error">{error}</div>}
-      {result?.content.length === 0 && <div className="empty">No tasks match these filters.</div>}
+
+  {error && <div className="error">{error}</div>}
+  {result === null && !error && <TableSkeleton />}
 
       {result && result.content.length > 0 && (
         <div className="table-wrap">
