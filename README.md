@@ -13,7 +13,7 @@ It is designed as a learning project: every folder has a `README.md` explaining 
 - Dashboard: counts, overdue, due today, top tasks to do next
 - Security: Spring Security, BCrypt, rate-limited login, ownership checks, CORS, validation, service-to-service API key
 - Swagger UI, Flyway migrations, global error handling, unit tests
-
+- Detailed understanding refer https://deepwiki.com/PremanandPhuke/STMS--Smart-Task-Management-System
 ## Architecture
 ```
 React (5173) --REST/JSON + JWT--> task-service (8080) --JDBC--> PostgreSQL (5432)
